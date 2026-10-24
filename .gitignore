@@ -1,0 +1,15 @@
+.idea
+.vscode
+
+venv
+.venv
+
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+
+cookie.txt
+
+*.log

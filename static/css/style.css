@@ -1,0 +1,401 @@
+:root {
+  --radius: 10px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+img {
+  max-width: 100%;
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  min-height: 100vh;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Noto Sans SC",
+    sans-serif;
+  color: #333;
+  background: url(../bg.jpg) center / cover no-repeat;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.page-header {
+  text-align: center;
+  font-size: 2rem;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.result-section {
+  margin-top: 1.5rem;
+}
+
+.result-section > .list-group {
+  margin-top: 1rem;
+}
+
+.section-title {
+  margin-bottom: 0.75rem;
+}
+
+.card {
+  padding: 1.5rem;
+  background-color: rgb(255 255 255 / 0.35);
+  border-radius: var(--radius);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* --------------------------------------------------------------------------
+   4. 表单布局
+   -------------------------------------------------------------------------- */
+.field {
+  margin-bottom: 1rem;
+}
+
+.label {
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.control {
+  background: none;
+  border: 0;
+  outline: 0;
+  height: 40px;
+  width: 100%;
+  border-bottom: 2px dotted #666;
+  font-size: 0.9rem;
+  padding: 8px 15px;
+  color: #666;
+}
+
+.control:focus {
+  border: 2px solid #366cbe;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.25rem;
+}
+
+.actions .btn {
+  width: 60%;
+  max-width: 200px;
+  background-color: #0066ff;
+  color: #fff;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.actions .btn:hover {
+  background-color: #005ce6;
+}
+
+.list-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 10px 10px;
+  list-style: none;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.384);
+}
+.btn-outline {
+  background-color: chartreuse;
+  padding: 3px 5px;
+  border: 1px solid #0d6efd;
+  border-radius: 5px;
+  color: #541a1a;
+}
+
+.song-name {
+  font-size: 1.25rem;
+}
+.lyric-box {
+  margin-top: 7px;
+}
+.track-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* TODO 练手：给 .track-item 加 padding、背景色、下边框，
+   再试试最后一行不要边框。 */
+
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0; /* 不加这行，长歌名不会出现省略号 */
+}
+
+/* 让右侧的“解析”按钮保持原样大小，不被压缩 */
+.track-item > .btn {
+  flex-shrink: 0;
+}
+
+.track-meta {
+  min-width: 0;
+}
+
+.track-name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* .select-song 只是 JS 用来绑定“解析”按钮的标记，本身不需要样式 */
+
+.track-artist,
+.track-album {
+  margin-right: 0.35rem;
+}
+
+/* TODO 练手：给 .track-artist / .track-album 加颜色和字号。 */
+
+/* --------------------------------------------------------------------------
+   7. 封面图（你原来的尺寸；margin-right 已去掉，改用父级的 gap）
+   flex-shrink: 0 很重要：不加的话，封面会被旁边的长歌名挤成一条细线。
+   -------------------------------------------------------------------------- */
+.entity-cover {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.track-cover {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.search-cover {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   8. 单曲解析结果
+   -------------------------------------------------------------------------- */
+.song-info {
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.song-info img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.song-name {
+  font-weight: 700;
+}
+
+/* grid + gap：让每一行信息自动上下留出间距 */
+.song-fields {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.song-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.badge {
+  display: inline-block;
+}
+
+/* TODO 练手：给 .badge 加 padding、字号、圆角；
+   再给 .badge-artist / .badge-album / .badge-quality /
+   .badge-size / .badge-link / .badge-lyric 分别加背景色。 */
+
+.lyric-label {
+  margin-top: 0.75rem;
+}
+
+.lyric-box {
+  max-height: 180px;
+  padding: 12px 16px;
+  overflow-y: auto;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #222;
+  background: linear-gradient(90deg, #f7f7fa 60%, #f0f4fa 100%);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.lyric-box:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+}
+
+#aplayer {
+  margin-top: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   9. 歌单 / 专辑信息
+   -------------------------------------------------------------------------- */
+.entity-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.entity-name {
+  margin-bottom: 0.25rem;
+}
+
+/* TODO 练手：给 .entity-desc 和 .muted 加颜色、字号。 */
+
+/* --------------------------------------------------------------------------
+   10. 页脚布局
+   -------------------------------------------------------------------------- */
+.site-footer {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* TODO 练手：给 .site-footer 加上背景色、文字颜色、上边框。 */
+
+/* --------------------------------------------------------------------------
+   11. 大图预览（原生 <dialog>，弹窗尺寸和内部排列已写好）
+   -------------------------------------------------------------------------- */
+.big-pic-dialog {
+  width: min(90vw, 640px);
+}
+
+/* TODO 练手：给 .big-pic-dialog 加 padding、圆角、边框、背景色；
+   再用 .big-pic-dialog::backdrop 改遮罩颜色。 */
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.dialog-header h2 {
+  margin: 0;
+}
+
+.dialog-close {
+  font: inherit;
+  cursor: pointer;
+}
+
+#big-pic-img {
+  display: block;
+  max-width: 100%;
+  max-height: 60vh;
+  margin: 0 auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   12. 无障碍辅助：视觉上隐藏，但读屏软件仍能读到（不要删）
+   -------------------------------------------------------------------------- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   13. 键盘跳转链接（你原来的样式）
+   -------------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  z-index: 1080;
+  padding: 0.5rem 1rem;
+  color: #0056b3;
+  background-color: #fff;
+  border-radius: 0.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: top 0.15s ease-in-out;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}

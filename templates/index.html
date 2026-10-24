@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="网易云音乐工具箱：搜索歌曲、解析单曲 / 歌单 / 专辑，并提供音乐下载链接。"
+    />
+    <title>网易云音乐工具箱</title>
+
+    <!-- 只保留 APlayer 自带的样式，页面其余样式全部由 style.css 控制 -->
+    <link
+      rel="stylesheet"
+      href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/aplayer/1.10.1/APlayer.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+
+    <script
+      defer
+      src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/jquery/3.7.1/jquery.min.js"
+    ></script>
+    <script
+      defer
+      src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/aplayer/1.10.1/APlayer.min.js"
+    ></script>
+    <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+    <main id="main-content" class="container">
+      <header class="page-header container">
+        <h1>网易云音乐工具箱</h1>
+      </header>
+      <section class="card" aria-labelledby="control-heading">
+        <h2 id="control-heading" class="visually-hidden">音乐解析与下载</h2>
+
+        <form id="main-form">
+          <div class="field">
+            <label class="label" for="mode-select">功能选择</label>
+            <select id="mode-select" class="control">
+              <option value="search">歌曲搜索</option>
+              <option value="parse">单曲解析</option>
+              <option value="playlist">歌单解析</option>
+              <option value="album">专辑解析</option>
+            </select>
+          </div>
+
+          <fieldset id="search-area">
+            <legend class="visually-hidden">歌曲搜索</legend>
+            <div class="field">
+              <label class="label" for="search_keywords">搜索关键词</label>
+              <input
+                type="text"
+                id="search_keywords"
+                class="control"
+                placeholder="输入关键词进行搜索"
+              />
+            </div>
+            <div class="field">
+              <label class="label" for="search_limit">返回数量</label>
+              <input
+                type="number"
+                id="search_limit"
+                class="control"
+                value="10"
+                min="1"
+                max="50"
+              />
+            </div>
+            <div class="actions">
+              <button type="button" id="search-btn" class="btn btn-success">
+                搜索
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset id="parse-area" hidden>
+            <legend class="visually-hidden">单曲解析</legend>
+            <div class="field">
+              <label class="label" for="song_ids">歌曲ID或URL</label>
+              <input
+                type="text"
+                id="song_ids"
+                class="control"
+                placeholder="输入歌曲ID或URL"
+              />
+            </div>
+            <div class="field">
+              <label class="label" for="level">音质选择</label>
+              <select id="level" class="control">
+                <option value="standard">标准音质</option>
+                <option value="exhigh">极高音质</option>
+                <option value="lossless">无损音质</option>
+                <option value="hires">Hires音质</option>
+                <option value="sky">沉浸环绕声</option>
+                <option value="jyeffect">高清环绕声</option>
+                <option value="jymaster">超清母带</option>
+                <option value="dolby">杜比全景声</option>
+              </select>
+            </div>
+            <div class="actions">
+              <button type="button" id="parse-btn" class="btn btn-primary">
+                解析
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset id="playlist-area" hidden>
+            <legend class="visually-hidden">歌单解析</legend>
+            <div class="field">
+              <label class="label" for="playlist_id">歌单ID或链接</label>
+              <input
+                type="text"
+                id="playlist_id"
+                class="control"
+                placeholder="输入歌单ID或网易云歌单链接"
+              />
+            </div>
+            <div class="actions">
+              <button type="button" id="playlist-btn" class="btn btn-warning">
+                解析歌单
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset id="album-area" hidden>
+            <legend class="visually-hidden">专辑解析</legend>
+            <div class="field">
+              <label class="label" for="album_id">专辑ID或链接</label>
+              <input
+                type="text"
+                id="album_id"
+                class="control"
+                placeholder="输入专辑ID或网易云专辑链接"
+              />
+            </div>
+            <div class="actions">
+              <button type="button" id="album-btn" class="btn btn-info">
+                解析专辑
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+
+      <!-- 搜索结果 -->
+      <section
+        id="search-result"
+        class="result-section"
+        hidden
+        aria-labelledby="search-result-heading"
+      >
+        <h2 id="search-result-heading" class="section-title">搜索结果</h2>
+        <ul class="list-group" id="search-list" aria-label="搜索结果列表"></ul>
+      </section>
+
+      <!-- 单曲解析结果 -->
+      <section
+        id="song-info"
+        class="card song-info"
+        hidden
+        aria-labelledby="song-info-heading"
+      >
+        <h2 id="song-info-heading" class="visually-hidden">单曲解析结果</h2>
+
+        <h3 class="song-name" id="song_name"></h3>
+
+        <div class="song-fields">
+          <div class="song-field">
+            <span class="badge badge-artist">歌手</span
+            ><span id="artist_names"></span>
+          </div>
+          <div class="song-field">
+            <span class="badge badge-album">专辑</span
+            ><span id="song_alname"></span>
+          </div>
+          <div class="song-field">
+            <span class="badge badge-quality">音质</span
+            ><span id="song_level"></span>
+          </div>
+          <div class="song-field">
+            <span class="badge badge-size">大小</span
+            ><span id="song_size"></span>
+          </div>
+          <div class="song-field">
+            <button
+              id="show-big-pic"
+              type="button"
+              class="btn btn-outline btn-small"
+            >
+              显示大图
+            </button>
+          </div>
+          <div class="song-field">
+            <span class="badge badge-link">链接</span
+            ><a id="song_url" href="" target="_blank" rel="noopener noreferrer"
+              >点击下载</a
+            >
+          </div>
+        </div>
+
+        <div class="lyric-label">
+          <span class="badge badge-lyric">歌词</span>
+        </div>
+        <div
+          class="lyric-box"
+          id="lyric"
+          role="region"
+          aria-label="歌词"
+          tabindex="0"
+        ></div>
+
+        <div id="aplayer"></div>
+      </section>
+
+      <!-- 歌单解析结果 -->
+      <section
+        id="playlist-result"
+        class="result-section"
+        hidden
+        aria-labelledby="playlist-name"
+      >
+        <h2 class="visually-hidden">歌单解析结果</h2>
+
+        <div class="card">
+          <div class="entity-header">
+            <img
+              id="playlist-cover"
+              src=""
+              alt="歌单封面"
+              class="entity-cover"
+            />
+            <div>
+              <h3 id="playlist-name" class="entity-name"></h3>
+              <p class="muted" id="playlist-creator"></p>
+            </div>
+          </div>
+          <p class="muted entity-desc" id="playlist-desc"></p>
+          <p class="muted">共 <span id="playlist-count"></span> 首歌</p>
+        </div>
+
+        <ul
+          class="list-group"
+          id="playlist-tracks"
+          aria-label="歌单歌曲列表"
+        ></ul>
+      </section>
+
+      <!-- 专辑解析结果 -->
+      <section
+        id="album-result"
+        class="result-section"
+        hidden
+        aria-labelledby="album-name"
+      >
+        <h2 class="visually-hidden">专辑解析结果</h2>
+
+        <div class="card">
+          <div class="entity-header">
+            <img id="album-cover" src="" alt="专辑封面" class="entity-cover" />
+            <div>
+              <h3 id="album-name" class="entity-name"></h3>
+              <p class="muted" id="album-artist"></p>
+            </div>
+          </div>
+          <p class="muted entity-desc" id="album-desc"></p>
+          <p class="muted">共 <span id="album-count"></span> 首歌</p>
+        </div>
+
+        <ul class="list-group" id="album-tracks" aria-label="专辑歌曲列表"></ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>
+          网易云音乐工具箱 &copy; 2026 | Powered by qingkong143 | Forked from
+          Suxiaoqingx |
+          <a
+            href="https://github.com/qingkong143/Netease_url"
+            target="_blank"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+        </p>
+      </div>
+    </footer>
+
+    <!-- 大图预览：原生 dialog，不再依赖 Bootstrap -->
+    <dialog
+      id="bigPicDialog"
+      class="big-pic-dialog"
+      aria-labelledby="bigPicDialogLabel"
+    >
+      <div class="dialog-header">
+        <h2 id="bigPicDialogLabel">大图预览</h2>
+        <button
+          type="button"
+          id="big-pic-close"
+          class="dialog-close"
+          aria-label="关闭"
+        >
+          &times;
+        </button>
+      </div>
+      <img id="big-pic-img" src="" alt="专辑封面大图" />
+    </dialog>
+  </body>
+</html>
